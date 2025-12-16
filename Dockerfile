@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.4
 
 # =============================================================================
 # AI Metrics Dashboard - Multi-stage Dockerfile
@@ -11,7 +11,7 @@
 # -----------------------------------------------------------------------------
 FROM node:22-alpine AS deps
 
-# Install security updates
+# Install security updates and add labels
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
 
 WORKDIR /app
@@ -55,6 +55,12 @@ RUN npm run build
 # Minimal production image with only necessary files
 # -----------------------------------------------------------------------------
 FROM node:22-alpine AS runner
+
+# Add metadata labels
+LABEL org.opencontainers.image.title="AI Metrics Dashboard"
+LABEL org.opencontainers.image.description="Dashboard for monitoring LibreChat AI usage metrics"
+LABEL org.opencontainers.image.vendor="innFactory"
+LABEL org.opencontainers.image.licenses="MIT"
 
 WORKDIR /app
 

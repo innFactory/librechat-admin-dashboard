@@ -4,6 +4,8 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16.x-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/innFactory/librechat-admin-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/innFactory/librechat-admin-dashboard/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/innFactory/librechat-admin-dashboard/actions/workflows/codeql.yml/badge.svg)](https://github.com/innFactory/librechat-admin-dashboard/actions/workflows/codeql.yml)
 
 A cloud-native dashboard for monitoring and analyzing [LibreChat](https://github.com/danny-avila/LibreChat) AI usage metrics, token consumption, and agent statistics.
 
@@ -16,6 +18,7 @@ A cloud-native dashboard for monitoring and analyzing [LibreChat](https://github
 - 🔐 **Password Protection**: Secure dashboard access with HTTP-only cookies
 - ☸️ **Kubernetes Ready**: Optimized for cloud-native deployments
 - 🐳 **Docker Support**: Multi-stage build for minimal image size
+- 🔒 **Security First**: OWASP best practices, automated scanning, and vulnerability detection
 
 ## Prerequisites
 
@@ -185,7 +188,114 @@ npm run lint
 
 # Fix linting issues
 npm run lint:fix
+
+# Run tests
+npm run test
+
+# Run tests with coverage
+npm run test:coverage
 ```
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment:
+
+### Continuous Integration (CI)
+
+Runs on every push to `main`/`develop` branches and pull requests:
+
+- **Linting**: Code style and quality checks with Biome
+- **Type Checking**: TypeScript type validation
+- **Testing**: Unit tests with coverage reporting
+- **Building**: Application build verification
+- **Security Scanning**: 
+  - npm audit for dependency vulnerabilities
+  - OWASP Dependency Check for CVE scanning
+  - CodeQL for code security analysis
+
+### Release Process
+
+Automated releases are triggered by pushing version tags:
+
+```bash
+# Create and push a new release tag
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The release workflow automatically:
+
+1. **Validates** the code (linting, type checking, tests, build)
+2. **Builds** multi-platform Docker images (linux/amd64, linux/arm64)
+3. **Scans** the Docker image with Trivy for vulnerabilities
+4. **Pushes** images to GitHub Container Registry (ghcr.io)
+5. **Creates** a GitHub release with changelog and deployment instructions
+
+### Docker Images
+
+Pre-built images are available at:
+- `ghcr.io/innfactory/librechat-admin-dashboard:latest`
+- `ghcr.io/innfactory/librechat-admin-dashboard:v1.0.0` (version tags)
+- `ghcr.io/innfactory/librechat-admin-dashboard:1` (major version tags)
+- `ghcr.io/innfactory/librechat-admin-dashboard:1.0` (major.minor version tags)
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/innfactory/librechat-admin-dashboard:latest
+
+# Run the container
+docker run -p 3000:3000 \
+  -e MONGODB_URI="mongodb://your-mongo-host:27017" \
+  -e MONGODB_DB_NAME="librechat" \
+  -e DASHBOARD_PASSWORD="your-secure-password" \
+  ghcr.io/innfactory/librechat-admin-dashboard:latest
+```
+
+## Security
+
+### Security Best Practices
+
+This dashboard implements multiple security layers:
+
+#### Application Security
+- **HTTP-Only Cookies**: Session tokens protected from XSS attacks
+- **HMAC Session Tokens**: Cryptographically signed with SHA-256
+- **Timing-Safe Comparisons**: Constant-time password verification
+- **Security Headers**: HSTS, CSP, X-Frame-Options, X-Content-Type-Options
+
+#### Container Security
+- **Non-Root User**: Runs as unprivileged user (UID 1001)
+- **Read-Only Filesystem**: Container filesystem is read-only
+- **Minimal Base Image**: Alpine Linux for reduced attack surface
+- **Multi-Stage Build**: No build tools in production image
+- **Security Updates**: Automated Alpine package updates
+
+#### Kubernetes Security
+- **Security Context**: seccompProfile, runAsNonRoot, drop ALL capabilities
+- **Network Policies**: Restrict ingress/egress traffic
+- **Pod Disruption Budget**: Ensure high availability
+- **Resource Limits**: CPU and memory constraints
+- **Health Probes**: Liveness, readiness, and startup probes
+
+### Vulnerability Scanning
+
+Automated security scanning runs on:
+- **Every PR and commit**: CodeQL analysis
+- **Weekly**: Scheduled CodeQL scans
+- **Every release**: Trivy container scanning
+- **Every build**: npm audit and OWASP Dependency Check
+
+### Known Vulnerabilities
+
+⚠️ **xlsx (0.18.5)**: High severity vulnerabilities in SheetJS library
+- **Issue**: Prototype pollution and ReDoS vulnerabilities
+- **Status**: No fix available in current stable release
+- **Mitigation**: Used only for export functionality; input validation applied
+- **Tracking**: Monitoring for updates to v0.19.3+ or v0.20.2+
+
+### Security Reporting
+
+To report security vulnerabilities, please email security@innfactory.de or use GitHub Security Advisories.
 
 ## Contributing
 
@@ -194,6 +304,12 @@ npm run lint:fix
 3. Commit changes: `git commit -am 'Add my feature'`
 4. Push to branch: `git push origin feature/my-feature`
 5. Submit a pull request
+
+All pull requests must pass:
+- Linting checks
+- Type checking
+- Unit tests
+- Security scans
 
 ## License
 
