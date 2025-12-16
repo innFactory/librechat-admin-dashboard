@@ -62,7 +62,7 @@ describe("Tool Stats Repository", () => {
 			expect(pipeline[0].$facet).toHaveProperty("prev");
 		});
 
-		it("should filter by MCP delimiter '::' in toolId", async () => {
+		it("should filter by MCP delimiter '::' in content.tool_call.name", async () => {
 			mockToArray.mockResolvedValueOnce([
 				{
 					currentMcpToolCalls: 50,
@@ -83,12 +83,30 @@ describe("Tool Stats Repository", () => {
 			const facet = pipeline[0].$facet;
 
 			// Verify current period filters for MCP delimiter
-			const currentMatch = facet.current[0].$match;
-			expect(currentMatch.toolId).toEqual({ $regex: "::" });
+			const currentMatches = facet.current.filter(
+				(stage: Record<string, unknown>) => "$match" in stage,
+			);
+			const toolCallMatch = currentMatches.find(
+				(stage: Record<string, unknown>) =>
+					stage.$match?.["content.tool_call.name"],
+			);
+			expect(toolCallMatch).toBeDefined();
+			expect(toolCallMatch.$match["content.tool_call.name"]).toEqual({
+				$regex: "(_mcp_|::)",
+			});
 
 			// Verify previous period filters for MCP delimiter
-			const prevMatch = facet.prev[0].$match;
-			expect(prevMatch.toolId).toEqual({ $regex: "::" });
+			const prevMatches = facet.prev.filter(
+				(stage: Record<string, unknown>) => "$match" in stage,
+			);
+			const prevToolCallMatch = prevMatches.find(
+				(stage: Record<string, unknown>) =>
+					stage.$match?.["content.tool_call.name"],
+			);
+			expect(prevToolCallMatch).toBeDefined();
+			expect(prevToolCallMatch.$match["content.tool_call.name"]).toEqual({
+				$regex: "(_mcp_|::)",
+			});
 		});
 
 		it("should handle zero MCP tool calls", async () => {

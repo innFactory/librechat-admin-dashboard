@@ -220,7 +220,7 @@ describe("Token Stats Repository", () => {
 			expect(projectStage.hour.$hour).toBeDefined();
 		});
 
-		it("should sort by day and time slot", async () => {
+		it("should sort by date and hour", async () => {
 			mockToArray.mockResolvedValueOnce([]);
 
 			const params = {
@@ -236,8 +236,9 @@ describe("Token Stats Repository", () => {
 			const sortStage = pipeline.find(
 				(stage: Record<string, unknown>) => "$sort" in stage,
 			);
-			expect(sortStage.$sort["_id.dayOfWeek"]).toBeDefined();
-			expect(sortStage.$sort["_id.hour"]).toBeDefined();
+			expect(sortStage).toBeDefined();
+			expect(sortStage.$sort["_id.date"]).toBe(1);
+			expect(sortStage.$sort["_id.hour"]).toBe(1);
 		});
 
 		it("should handle empty date range", async () => {

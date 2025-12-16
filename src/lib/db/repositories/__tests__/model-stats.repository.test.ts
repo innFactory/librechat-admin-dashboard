@@ -163,7 +163,7 @@ describe("Model Stats Repository", () => {
 			expect(result[0].totalOutputToken).toBe(150000);
 		});
 
-		it("should exclude agents endpoint", async () => {
+		it("should include date range filters in pipeline", async () => {
 			mockToArray.mockResolvedValueOnce([]);
 
 			const params = {
@@ -176,10 +176,12 @@ describe("Model Stats Repository", () => {
 			const pipeline = mockAggregate.mock.calls[0][0];
 			const matchStage = pipeline[0].$match;
 
-			expect(matchStage.endpoint).toEqual({ $ne: "agents" });
+			expect(matchStage.createdAt.$gte).toEqual(params.startDate);
+			expect(matchStage.createdAt.$lte).toEqual(params.endDate);
+			expect(matchStage.model).toEqual({ $ne: null });
 		});
 
-		it("should calculate median using approximate method", async () => {
+		it("should use lookup to resolve agent models", async () => {
 			mockToArray.mockResolvedValueOnce([]);
 
 			const params = {
@@ -191,17 +193,21 @@ describe("Model Stats Repository", () => {
 
 			const pipeline = mockAggregate.mock.calls[0][0];
 
-			// Check for $median operator in tokenStats facet
-			const facet = pipeline[1].$facet;
-			const tokenStatsProject = facet.tokenStats.find(
+			// Check for conversation lookup
+			const conversationLookup = pipeline.find(
 				(stage: Record<string, unknown>) =>
-					"$project" in stage &&
-					(stage.$project as Record<string, unknown>).tokenMedian,
+					"$lookup" in stage &&
+					(stage.$lookup as Record<string, unknown>).from === "conversations",
 			);
+			expect(conversationLookup).toBeDefined();
 
-			expect(tokenStatsProject.$project.tokenMedian.$median.method).toBe(
-				"approximate",
+			// Check for agent lookup
+			const agentLookup = pipeline.find(
+				(stage: Record<string, unknown>) =>
+					"$lookup" in stage &&
+					(stage.$lookup as Record<string, unknown>).from === "agents",
 			);
+			expect(agentLookup).toBeDefined();
 		});
 	});
 
@@ -263,13 +269,13 @@ describe("Model Stats Repository", () => {
 			await getModelTimeSeries(params);
 
 			const pipeline = mockAggregate.mock.calls[0][0];
-			const facet = pipeline[1].$facet;
 
-			// Find addFields stage in userMessages
-			const addFieldsStage = facet.userMessages.find(
+			// Find addFields stage
+			const addFieldsStage = pipeline.find(
 				(stage: Record<string, unknown>) => "$addFields" in stage,
 			);
 
+			expect(addFieldsStage).toBeDefined();
 			expect(addFieldsStage.$addFields.hour.$dateToString.format).toBe(
 				"%d, %H:00",
 			);
@@ -288,12 +294,12 @@ describe("Model Stats Repository", () => {
 			await getModelTimeSeries(params);
 
 			const pipeline = mockAggregate.mock.calls[0][0];
-			const facet = pipeline[1].$facet;
 
-			const addFieldsStage = facet.userMessages.find(
+			const addFieldsStage = pipeline.find(
 				(stage: Record<string, unknown>) => "$addFields" in stage,
 			);
 
+			expect(addFieldsStage).toBeDefined();
 			expect(addFieldsStage.$addFields.month.$dateToString.format).toBe(
 				"%Y-%m",
 			);
