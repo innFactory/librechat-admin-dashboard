@@ -6,10 +6,10 @@
 
 import { Collections, getCollection } from "../connection";
 import type {
-    DateRange,
-    MessageStatsResult,
-    PeriodComparison,
-    TokenCountResult,
+	DateRange,
+	MessageStatsResult,
+	PeriodComparison,
+	TokenCountResult,
 } from "../types";
 
 /**

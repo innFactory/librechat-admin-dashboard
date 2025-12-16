@@ -18,9 +18,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { mcpToolStatsTableAtom } from "@/atoms/mcp-tool-stats-table-atom";
 import useTableManager from "@/hooks/useTableManager";
 import type { McpToolStatsTable } from "../models/mcp-tool-stats";
-import McpToolStatsTableChart from "./mcp-tool-stats-table-chart";
 import EnhancedTableHead from "./enhanced-table-head";
 import EnhancedTableToolbar from "./enhanced-table-toolbar";
+import McpToolStatsTableChart from "./mcp-tool-stats-table-chart";
 
 // Types
 interface McpToolStatsTableRow {
@@ -48,7 +48,7 @@ const headCells: readonly HeadCell[] = [
 // Expandable row renderer
 function Row({ row }: { row: McpToolStatsTableRow }) {
 	const [open, setOpen] = useState(false);
-	const toolId = `${row.toolName}_mcp_${row.serverName}`;
+	const _toolId = `${row.toolName}_mcp_${row.serverName}`;
 
 	return (
 		<React.Fragment>
@@ -78,7 +78,10 @@ function Row({ row }: { row: McpToolStatsTableRow }) {
 				<TableCell style={{ padding: 0 }} colSpan={6}>
 					<Collapse in={open} timeout="auto" unmountOnExit>
 						<Box sx={{ margin: "10px" }}>
-							<McpToolStatsTableChart toolName={row.toolName} serverName={row.serverName} />
+							<McpToolStatsTableChart
+								toolName={row.toolName}
+								serverName={row.serverName}
+							/>
 						</Box>
 					</Collapse>
 				</TableCell>
@@ -200,7 +203,10 @@ const McpToolStatsTableWithChart: React.FC = () => {
 							</TableRow>
 						) : (
 							visibleRows.map((row, index) => (
-								<Row key={`${row.toolName}-${row.serverName}-${index}`} row={row} />
+								<Row
+									key={`${row.toolName}-${row.serverName}-${index}`}
+									row={row}
+								/>
 							))
 						)}
 					</TableBody>

@@ -44,13 +44,13 @@ export async function getFilesProcessedStats(
 	];
 
 	const result = await collection.aggregate(pipeline).toArray();
-	
+
 	// Map to TokenCountResult structure to reuse existing types/components if possible,
 	// or just return simple object. Here we return a structure similar to other stats.
-	return result.map(r => ({
+	return result.map((r) => ({
 		currentInputToken: r.current, // abusing this field for "current count"
-		prevInputToken: r.prev,       // abusing this field for "prev count"
+		prevInputToken: r.prev, // abusing this field for "prev count"
 		currentOutputToken: 0,
-		prevOutputToken: 0
+		prevOutputToken: 0,
 	}));
 }

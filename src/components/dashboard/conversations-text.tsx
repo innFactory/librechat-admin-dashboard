@@ -11,8 +11,8 @@ import Typography from "@mui/material/Typography";
 import { useAtomValue } from "jotai";
 import { loadable } from "jotai/utils";
 import { useEffect, useMemo, useState } from "react";
-import { conversationsAtom } from "@/atoms/conversations-atom";
 import { autoRefreshAtom } from "@/atoms/auto-refresh-atom";
+import { conversationsAtom } from "@/atoms/conversations-atom";
 import { dateRangeAtom } from "@/atoms/date-range-atom";
 import { useLoadableWithCache } from "@/hooks/useLoadableWithCache";
 
@@ -75,14 +75,18 @@ function isThisYear(startDate: Date | null, endDate: Date | null): boolean {
 }
 
 const ConversationsText = () => {
-	const { data, previousData, showSkeleton, isRefetching, isFirstLoad } = useLoadableWithCache(loadableConversationsAtom);
-	const autoRefreshEnabled = useAtomValue(autoRefreshAtom);
+	const { data, previousData, showSkeleton, isRefetching, isFirstLoad } =
+		useLoadableWithCache(loadableConversationsAtom);
+	const _autoRefreshEnabled = useAtomValue(autoRefreshAtom);
 	const dateRange = useAtomValue(dateRangeAtom);
 	const [isClient, setIsClient] = useState(false);
 	const { mode } = useColorScheme();
 	const { vars } = useTheme();
 
-	const isTodayRange = useMemo(() => isToday(dateRange.startDate, dateRange.endDate), [dateRange]);
+	const isTodayRange = useMemo(
+		() => isToday(dateRange.startDate, dateRange.endDate),
+		[dateRange],
+	);
 
 	//https://nextjs.org/docs/messages/react-hydration-error
 	useEffect(() => {
@@ -129,8 +133,12 @@ const ConversationsText = () => {
 		if (delta === 0) {
 			return { trendValue: 0, trendLabel: "vs. prev. period", showTrend: true };
 		}
-		return { trendValue: delta, trendLabel: "vs. prev. period", showTrend: true };
-	}, [data, previousData, isFirstLoad, isTodayRange, autoRefreshEnabled]);
+		return {
+			trendValue: delta,
+			trendLabel: "vs. prev. period",
+			showTrend: true,
+		};
+	}, [data, isFirstLoad]);
 
 	return (
 		<div
@@ -154,13 +162,15 @@ const ConversationsText = () => {
 				<ChatIcon
 					sx={{
 						fontSize: "1rem",
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
 					}}
 				/>
 				<Typography
 					align={"center"}
-					sx={{ 
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
+					sx={{
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
 						fontSize: "13px",
 						fontWeight: 500,
 						letterSpacing: "0.02em",
@@ -179,9 +189,8 @@ const ConversationsText = () => {
 						height={40}
 						sx={{
 							margin: "0 auto",
-							backgroundColor: mode === "dark" 
-								? "rgba(255,255,255,0.06)" 
-								: "rgba(0,0,0,0.06)",
+							backgroundColor:
+								mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
 							borderRadius: "8px",
 						}}
 						animation={"wave"}
@@ -192,16 +201,20 @@ const ConversationsText = () => {
 						height={30}
 						sx={{
 							margin: "0 auto",
-							backgroundColor: mode === "dark" 
-								? "rgba(255,255,255,0.06)" 
-								: "rgba(0,0,0,0.06)",
+							backgroundColor:
+								mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
 							borderRadius: "8px",
 						}}
 						animation={"wave"}
 					/>
 				</div>
 			) : (
-				<Box sx={{ opacity: isRefetching ? 0.7 : 1, transition: "opacity 0.2s ease" }}>
+				<Box
+					sx={{
+						opacity: isRefetching ? 0.7 : 1,
+						transition: "opacity 0.2s ease",
+					}}
+				>
 					<Typography
 						variant="h5"
 						marginTop="12px"
@@ -210,9 +223,10 @@ const ConversationsText = () => {
 							fontWeight: 700,
 							fontSize: "32px",
 							letterSpacing: "-0.03em",
-							background: mode === "dark"
-								? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
-								: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
+							background:
+								mode === "dark"
+									? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
+									: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
 							backgroundClip: "text",
 							WebkitBackgroundClip: "text",
 							WebkitTextFillColor: "transparent",
@@ -239,7 +253,8 @@ const ConversationsText = () => {
 							) : (
 								<TrendingDownIcon sx={{ fontSize: "16px" }} />
 							)}
-							{trendValue > 0 ? "+" : ""}{trendValue.toLocaleString("de-DE")} {trendLabel}
+							{trendValue > 0 ? "+" : ""}
+							{trendValue.toLocaleString("de-DE")} {trendLabel}
 						</Typography>
 					) : showTrend && trendValue === 0 ? (
 						<Typography
@@ -252,7 +267,8 @@ const ConversationsText = () => {
 								gap: "4px",
 								marginTop: "4px",
 								fontWeight: 500,
-								color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
+								color:
+									mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
 							}}
 						>
 							<TrendingFlatIcon sx={{ fontSize: "16px" }} />

@@ -28,8 +28,8 @@ import WebSearchStatsText from "@/components/dashboard/web-search-stats-text";
 const DashboardPage = () => {
 	const { mode } = useColorScheme();
 	const { vars } = useTheme();
-	const [dateRange] = useAtom(dateRangeAtom);
-	const [isInitialLoad, setIsInitialLoad] = useState(true);
+	const [_dateRange] = useAtom(dateRangeAtom);
+	const [_isInitialLoad, setIsInitialLoad] = useState(true);
 
 	// Mark initial load as complete after first render
 	useEffect(() => {
@@ -156,13 +156,13 @@ const DashboardPage = () => {
 							gridTemplateColumns: "repeat(5, 1fr)",
 							gap: 2,
 							marginBottom: "16px",
-							"@media (max-width: 1400px)": { 
+							"@media (max-width: 1400px)": {
 								gridTemplateColumns: "repeat(3, 1fr)",
 							},
-							"@media (max-width: 900px)": { 
+							"@media (max-width: 900px)": {
 								gridTemplateColumns: "repeat(2, 1fr)",
 							},
-							"@media (max-width: 600px)": { 
+							"@media (max-width: 600px)": {
 								gridTemplateColumns: "1fr",
 							},
 						}}
@@ -190,13 +190,13 @@ const DashboardPage = () => {
 							gridTemplateColumns: "repeat(5, 1fr)",
 							gap: 2,
 							marginBottom: "30px",
-							"@media (max-width: 1400px)": { 
+							"@media (max-width: 1400px)": {
 								gridTemplateColumns: "repeat(3, 1fr)",
 							},
-							"@media (max-width: 900px)": { 
+							"@media (max-width: 900px)": {
 								gridTemplateColumns: "repeat(2, 1fr)",
 							},
-							"@media (max-width: 600px)": { 
+							"@media (max-width: 600px)": {
 								gridTemplateColumns: "1fr",
 							},
 						}}

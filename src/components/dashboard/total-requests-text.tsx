@@ -12,8 +12,8 @@ import { useAtomValue } from "jotai";
 import { loadable } from "jotai/utils";
 import { useMemo } from "react";
 import { autoRefreshAtom } from "@/atoms/auto-refresh-atom";
-import { tokensPerMessageAtom } from "@/atoms/tokens-per-message-atom";
 import { dateRangeAtom } from "@/atoms/date-range-atom";
+import { tokensPerMessageAtom } from "@/atoms/tokens-per-message-atom";
 import type { AvgTokensPerMessage } from "@/components/models/avg-tokens-per-message";
 import { useLoadableWithCache } from "@/hooks/useLoadableWithCache";
 
@@ -82,13 +82,17 @@ function isThisYear(startDate: Date | null, endDate: Date | null): boolean {
 const loadableRequestAtom = loadable(tokensPerMessageAtom);
 
 const TotalRequestText = () => {
-	const { data, previousData, showSkeleton, isRefetching, isFirstLoad } = useLoadableWithCache(loadableRequestAtom);
-	const autoRefreshEnabled = useAtomValue(autoRefreshAtom);
+	const { data, previousData, showSkeleton, isRefetching, isFirstLoad } =
+		useLoadableWithCache(loadableRequestAtom);
+	const _autoRefreshEnabled = useAtomValue(autoRefreshAtom);
 	const dateRange = useAtomValue(dateRangeAtom);
 	const { mode } = useColorScheme();
 	const { vars } = useTheme();
 
-	const isTodayRange = useMemo(() => isToday(dateRange.startDate, dateRange.endDate), [dateRange]);
+	const isTodayRange = useMemo(
+		() => isToday(dateRange.startDate, dateRange.endDate),
+		[dateRange],
+	);
 
 	// Determine label based on date range
 	const label = useMemo(() => {
@@ -137,8 +141,12 @@ const TotalRequestText = () => {
 		if (delta === 0) {
 			return { trendValue: 0, trendLabel: "vs. prev. period", showTrend: true };
 		}
-		return { trendValue: delta, trendLabel: "vs. prev. period", showTrend: true };
-	}, [data, previousData, isFirstLoad, isTodayRange, autoRefreshEnabled]);
+		return {
+			trendValue: delta,
+			trendLabel: "vs. prev. period",
+			showTrend: true,
+		};
+	}, [data, isFirstLoad]);
 
 	return (
 		<div
@@ -162,13 +170,15 @@ const TotalRequestText = () => {
 				<QueryStatsIcon
 					sx={{
 						fontSize: "1rem",
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
 					}}
 				/>
 				<Typography
 					align={"center"}
-					sx={{ 
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
+					sx={{
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
 						fontSize: "13px",
 						fontWeight: 500,
 						letterSpacing: "0.02em",
@@ -187,9 +197,8 @@ const TotalRequestText = () => {
 						height={40}
 						sx={{
 							margin: "0 auto",
-							backgroundColor: mode === "dark" 
-								? "rgba(255,255,255,0.06)" 
-								: "rgba(0,0,0,0.06)",
+							backgroundColor:
+								mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
 							borderRadius: "8px",
 						}}
 						animation={"wave"}
@@ -200,16 +209,20 @@ const TotalRequestText = () => {
 						height={30}
 						sx={{
 							margin: "0 auto",
-							backgroundColor: mode === "dark" 
-								? "rgba(255,255,255,0.06)" 
-								: "rgba(0,0,0,0.06)",
+							backgroundColor:
+								mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
 							borderRadius: "8px",
 						}}
 						animation={"wave"}
 					/>
 				</div>
 			) : (
-				<Box sx={{ opacity: isRefetching ? 0.7 : 1, transition: "opacity 0.2s ease" }}>
+				<Box
+					sx={{
+						opacity: isRefetching ? 0.7 : 1,
+						transition: "opacity 0.2s ease",
+					}}
+				>
 					<Typography
 						variant={"h5"}
 						marginTop={"12px"}
@@ -218,9 +231,10 @@ const TotalRequestText = () => {
 							fontWeight: 700,
 							fontSize: "32px",
 							letterSpacing: "-0.03em",
-							background: mode === "dark"
-								? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
-								: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
+							background:
+								mode === "dark"
+									? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
+									: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
 							backgroundClip: "text",
 							WebkitBackgroundClip: "text",
 							WebkitTextFillColor: "transparent",
@@ -247,7 +261,8 @@ const TotalRequestText = () => {
 							) : (
 								<TrendingDownIcon sx={{ fontSize: "16px" }} />
 							)}
-							{trendValue > 0 ? "+" : ""}{trendValue.toLocaleString("de-DE")} {trendLabel}
+							{trendValue > 0 ? "+" : ""}
+							{trendValue.toLocaleString("de-DE")} {trendLabel}
 						</Typography>
 					) : showTrend && trendValue === 0 ? (
 						<Typography
@@ -260,7 +275,8 @@ const TotalRequestText = () => {
 								gap: "4px",
 								marginTop: "4px",
 								fontWeight: 500,
-								color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
+								color:
+									mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
 							}}
 						>
 							<TrendingFlatIcon sx={{ fontSize: "16px" }} />

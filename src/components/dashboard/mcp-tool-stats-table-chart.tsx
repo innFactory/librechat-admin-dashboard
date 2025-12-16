@@ -19,7 +19,7 @@ const margin = { right: 24 };
 const McpToolStatsTableChart = ({ toolName, serverName }: Props) => {
 	const loadableChartAtom = loadable(mcpToolStatsChartAtom);
 	const [chartResponse] = useAtom(loadableChartAtom);
-	const timeArea = useAtomValue(dateRangeAtom);
+	const _timeArea = useAtomValue(dateRangeAtom);
 
 	// Filter and prepare chart data for this specific tool
 	const { chartData, xLabels } = useMemo(() => {

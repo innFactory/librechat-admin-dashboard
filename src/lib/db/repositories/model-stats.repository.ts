@@ -6,11 +6,11 @@
 
 import { Collections, getCollection } from "../connection";
 import type {
-    DateRange,
-    ModelUsageEntry,
-    StatsTableEntry,
-    TimeGranularity,
-    TimeSeriesEntry,
+	DateRange,
+	ModelUsageEntry,
+	StatsTableEntry,
+	TimeGranularity,
+	TimeSeriesEntry,
 } from "../types";
 
 /**

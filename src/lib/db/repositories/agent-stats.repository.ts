@@ -32,7 +32,7 @@ export async function getTotalAgentCount(): Promise<number> {
 
 /**
  * Get agent statistics for table display
- * 
+ *
  * Uses transactions collection with accurate billing data.
  * Links via: transactions -> conversations (by conversationId) -> agents (by agent_id)
  */
@@ -134,7 +134,13 @@ export async function getAgentTimeSeries(
 		timezone?: string;
 	},
 ): Promise<TimeSeriesEntry[]> {
-	const { startDate, endDate, agentName, granularity, timezone = "UTC" } = params;
+	const {
+		startDate,
+		endDate,
+		agentName,
+		granularity,
+		timezone = "UTC",
+	} = params;
 	const collection = await getCollection(Collections.TRANSACTIONS);
 	const dateFormat = DATE_FORMATS[granularity];
 	const timeField = granularity;
@@ -173,10 +179,7 @@ export async function getAgentTimeSeries(
 		// Filter by the requested agent name
 		{
 			$match: {
-				$or: [
-					{ "agent.name": agentName },
-					{ "conv.agent_id": agentName },
-				],
+				$or: [{ "agent.name": agentName }, { "conv.agent_id": agentName }],
 			},
 		},
 		{
