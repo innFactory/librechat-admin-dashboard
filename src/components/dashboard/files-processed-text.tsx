@@ -16,29 +16,8 @@ import { useLoadableWithCache } from "@/hooks/useLoadableWithCache";
 // filesProcessedAtom is already loadable in the atom definition
 const FilesProcessedText = () => {
 	const { mode } = useColorScheme();
-	// @ts-expect-error - The atom is already loadable, but useLoadableWithCache expects a regular atom to wrap.
-	// However, since we can't easily change the atom definition without breaking other things,
-	// we'll cast or ignore for now, but the data structure is what matters.
-	// Actually, looking at other components, they wrap a raw async atom with loadable.
-	// filesProcessedAtom is ALREADY loadable(asyncAtom).
-	// useLoadableWithCache expects the atom passed to be the one that returns the promise/value.
-	// If filesProcessedAtom is already loadable, useLoadableWithCache might double-wrap or get confused.
 
-	// Let's check how other components do it.
-	// input-token-text.tsx: const loadableInputOutputTokenAtom = loadable(inputOuputTokenAtom);
-	// inputOuputTokenAtom is defined as atom(async (get) => ...).
-
-	// filesProcessedAtom in src/atoms/files-processed-atom.tsx is defined as:
-	// export const filesProcessedAtom = loadable(filesProcessedAsyncAtom);
-
-	// So it is ALREADY a loadable. We should NOT wrap it again with loadable().
-	// And useLoadableWithCache expects a loadable atom? No, it expects an atom that it can use with useAtom.
-
-	// If we pass the already loadable atom to useLoadableWithCache, it might work if the hook handles it.
-	// But wait, useLoadableWithCache implementation:
-	// export function useLoadableWithCache<T>(atom: Atom<Loadable<T>>) { ... }
-
-	// So we should pass filesProcessedAtom directly.
+	// filesProcessedAtom is already loadable, so we pass it directly to useLoadableWithCache
 	const { data, previousData, showSkeleton, isRefetching, isFirstLoad } =
 		useLoadableWithCache(filesProcessedAtom);
 	const _autoRefreshEnabled = useAtomValue(autoRefreshAtom);

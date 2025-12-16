@@ -87,11 +87,13 @@ describe("Tool Stats Repository", () => {
 				(stage: Record<string, unknown>) => "$match" in stage,
 			);
 			const toolCallMatch = currentMatches.find(
-				(stage: Record<string, unknown>) =>
+				(stage: Record<string, any>) =>
 					stage.$match?.["content.tool_call.name"],
 			);
 			expect(toolCallMatch).toBeDefined();
-			expect(toolCallMatch.$match["content.tool_call.name"]).toEqual({
+			expect(
+				(toolCallMatch as Record<string, any>).$match["content.tool_call.name"],
+			).toEqual({
 				$regex: "(_mcp_|::)",
 			});
 
@@ -100,11 +102,15 @@ describe("Tool Stats Repository", () => {
 				(stage: Record<string, unknown>) => "$match" in stage,
 			);
 			const prevToolCallMatch = prevMatches.find(
-				(stage: Record<string, unknown>) =>
+				(stage: Record<string, any>) =>
 					stage.$match?.["content.tool_call.name"],
 			);
 			expect(prevToolCallMatch).toBeDefined();
-			expect(prevToolCallMatch.$match["content.tool_call.name"]).toEqual({
+			expect(
+				(prevToolCallMatch as Record<string, any>).$match[
+					"content.tool_call.name"
+				],
+			).toEqual({
 				$regex: "(_mcp_|::)",
 			});
 		});
