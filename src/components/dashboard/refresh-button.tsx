@@ -33,12 +33,16 @@ const ReloadButton = () => {
 					width: "40px",
 					height: "40px",
 					background:
-						mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.04)",
+						mode === "dark"
+							? "rgba(255, 255, 255, 0.08)"
+							: "rgba(0, 0, 0, 0.04)",
 					backdropFilter: "blur(10px)",
 					WebkitBackdropFilter: "blur(10px)",
 					border: "1px solid",
 					borderColor:
-						mode === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)",
+						mode === "dark"
+							? "rgba(255, 255, 255, 0.1)"
+							: "rgba(0, 0, 0, 0.06)",
 					transition: "all 0.2s ease",
 					"&:hover": {
 						background:

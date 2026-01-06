@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import {
-    getDateParamsFromUrl,
-    validateDateRange,
+	getDateParamsFromUrl,
+	validateDateRange,
 } from "@/lib/api/date-validation";
 import { getRequestHeatmap } from "@/lib/db/repositories";
 

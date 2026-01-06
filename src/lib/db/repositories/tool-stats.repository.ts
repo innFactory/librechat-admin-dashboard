@@ -203,11 +203,13 @@ export async function getMcpToolStatsTable(
 				toolId: "$content.tool_call.name",
 				delimiter: {
 					$cond: {
-						if: { $regexMatch: { input: "$content.tool_call.name", regex: "::" } },
+						if: {
+							$regexMatch: { input: "$content.tool_call.name", regex: "::" },
+						},
 						then: "::",
-						else: "_mcp_"
-					}
-				}
+						else: "_mcp_",
+					},
+				},
 			},
 		},
 		{
@@ -280,11 +282,13 @@ export async function getMcpToolStatsChart(
 				toolId: "$content.tool_call.name",
 				delimiter: {
 					$cond: {
-						if: { $regexMatch: { input: "$content.tool_call.name", regex: "::" } },
+						if: {
+							$regexMatch: { input: "$content.tool_call.name", regex: "::" },
+						},
 						then: "::",
-						else: "_mcp_"
-					}
-				}
+						else: "_mcp_",
+					},
+				},
 			},
 		},
 		{
@@ -449,4 +453,3 @@ export async function getWebSearchStats(
 		}
 	);
 }
-

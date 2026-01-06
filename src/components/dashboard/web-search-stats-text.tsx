@@ -13,8 +13,8 @@ import { autoRefreshAtom } from "@/atoms/auto-refresh-atom";
 import { dateRangeAtom } from "@/atoms/date-range-atom";
 import { webSearchStatsAtom } from "@/atoms/web-search-stats-atom";
 import {
-    getDateRangeLabel,
-    isToday,
+	getDateRangeLabel,
+	isToday,
 } from "@/components/utils/date-range-helpers";
 import { useLoadableWithCache } from "@/hooks/useLoadableWithCache";
 
@@ -38,7 +38,7 @@ const WebSearchStatsText = () => {
 	}, []);
 
 	// Date range label for subtitle
-	const dateRangeLabel = useMemo(
+	const _dateRangeLabel = useMemo(
 		() => getDateRangeLabel(dateRange.startDate, dateRange.endDate),
 		[dateRange.startDate, dateRange.endDate],
 	);

@@ -4,12 +4,10 @@ import ContrastIcon from "@mui/icons-material/Contrast";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { Box, IconButton, useColorScheme } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 
 const DarkLightSwitch = () => {
 	const { mode, setMode } = useColorScheme();
-	const { vars } = useTheme();
 
 	const [isClient, setIsClient] = useState(false);
 	useEffect(() => {

@@ -1,8 +1,49 @@
+# Build outputs
 .next
+out
+build
+dist
+
+# Dependencies (installed in container)
 node_modules
+
+# Git
 .git
 .gitignore
-.DS_Store
-README.md
+
+# IDE
 .vscode
 .idea
+
+# OS
+.DS_Store
+
+# Docs
+README.md
+docs/
+
+# Tests
+__tests__
+*.test.ts
+*.test.tsx
+coverage
+jest.config.ts
+jest.setup.ts
+
+# CI/CD
+.github
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Dev files
+*.log
+.swc
+*.tsbuildinfo
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore

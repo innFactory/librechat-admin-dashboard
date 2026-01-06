@@ -232,11 +232,11 @@ describe("Token Stats Repository", () => {
 
 			const pipeline = mockAggregate.mock.calls[0][0];
 
-			// Find the $sort stage
+			// Find the $sort stage - sorts by date and hour now
 			const sortStage = pipeline.find(
 				(stage: Record<string, unknown>) => "$sort" in stage,
 			);
-			expect(sortStage.$sort["_id.dayOfWeek"]).toBeDefined();
+			expect(sortStage.$sort["_id.date"]).toBeDefined();
 			expect(sortStage.$sort["_id.hour"]).toBeDefined();
 		});
 

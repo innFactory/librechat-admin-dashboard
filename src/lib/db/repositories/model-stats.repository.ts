@@ -6,11 +6,11 @@
 
 import { Collections, getCollection } from "../connection";
 import type {
-    DateRange,
-    ModelUsageEntry,
-    StatsTableEntry,
-    TimeGranularity,
-    TimeSeriesEntry,
+	DateRange,
+	ModelUsageEntry,
+	StatsTableEntry,
+	TimeGranularity,
+	TimeSeriesEntry,
 } from "../types";
 
 /**
@@ -308,7 +308,12 @@ export async function getModelTimeSeries(
 						],
 					},
 				},
-				requests: { $sum: 1 },
+				// Count only completion transactions as requests (each LLM call has 1 prompt + 1 completion)
+				requests: {
+					$sum: {
+						$cond: [{ $eq: ["$tokenType", "completion"] }, 1, 0],
+					},
+				},
 			},
 		},
 		{ $sort: { [`_id.${timeField}`]: 1 } },

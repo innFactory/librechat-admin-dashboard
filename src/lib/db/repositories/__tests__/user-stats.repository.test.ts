@@ -14,7 +14,7 @@ const mockCollection: Partial<Collection> = {
 	countDocuments: mockCountDocuments,
 };
 
-const mockDb: Partial<Db> = {
+const _mockDb: Partial<Db> = {
 	collection: jest.fn().mockReturnValue(mockCollection),
 };
 

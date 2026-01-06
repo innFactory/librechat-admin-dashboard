@@ -5,46 +5,15 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { Box, Skeleton, Typography, useColorScheme } from "@mui/material";
-import { useMemo, useState, useEffect } from "react";
-import { useAtomValue } from "jotai";
-import { autoRefreshAtom } from "@/atoms/auto-refresh-atom";
-import { dateRangeAtom } from "@/atoms/date-range-atom";
+import { useEffect, useMemo, useState } from "react";
 import { filesProcessedAtom } from "@/atoms/files-processed-atom";
 import { useLoadableWithCache } from "@/hooks/useLoadableWithCache";
-import { isToday } from "@/components/utils/date-range-helpers";
 
-// filesProcessedAtom is already loadable in the atom definition
 const FilesProcessedText = () => {
 	const { mode } = useColorScheme();
-	// @ts-ignore - The atom is already loadable, but useLoadableWithCache expects a regular atom to wrap. 
-	// However, since we can't easily change the atom definition without breaking other things, 
-	// we'll cast or ignore for now, but the data structure is what matters.
-	// Actually, looking at other components, they wrap a raw async atom with loadable.
-	// filesProcessedAtom is ALREADY loadable(asyncAtom).
-	// useLoadableWithCache expects the atom passed to be the one that returns the promise/value.
-	// If filesProcessedAtom is already loadable, useLoadableWithCache might double-wrap or get confused.
-	
-	// Let's check how other components do it. 
-	// input-token-text.tsx: const loadableInputOutputTokenAtom = loadable(inputOuputTokenAtom);
-	// inputOuputTokenAtom is defined as atom(async (get) => ...).
-	
-	// filesProcessedAtom in src/atoms/files-processed-atom.tsx is defined as:
-	// export const filesProcessedAtom = loadable(filesProcessedAsyncAtom);
-	
-	// So it is ALREADY a loadable. We should NOT wrap it again with loadable().
-	// And useLoadableWithCache expects a loadable atom? No, it expects an atom that it can use with useAtom.
-	
-	// If we pass the already loadable atom to useLoadableWithCache, it might work if the hook handles it.
-	// But wait, useLoadableWithCache implementation:
-	// export function useLoadableWithCache<T>(atom: Atom<Loadable<T>>) { ... }
-	
-	// So we should pass filesProcessedAtom directly.
-	const { data, previousData, showSkeleton, isRefetching, isFirstLoad } = useLoadableWithCache(filesProcessedAtom);
-	const autoRefreshEnabled = useAtomValue(autoRefreshAtom);
-	const dateRange = useAtomValue(dateRangeAtom);
+	const { data, showSkeleton, isRefetching, isFirstLoad } =
+		useLoadableWithCache(filesProcessedAtom);
 	const [isClient, setIsClient] = useState(false);
-
-	const isTodayRange = useMemo(() => isToday(dateRange.startDate, dateRange.endDate), [dateRange]);
 
 	useEffect(() => {
 		setIsClient(true);
@@ -68,8 +37,12 @@ const FilesProcessedText = () => {
 		if (delta === 0) {
 			return { trendValue: 0, trendLabel: "vs. prev. period", showTrend: true };
 		}
-		return { trendValue: delta, trendLabel: "vs. prev. period", showTrend: true };
-	}, [data, previousData, isFirstLoad, isTodayRange, autoRefreshEnabled]);
+		return {
+			trendValue: delta,
+			trendLabel: "vs. prev. period",
+			showTrend: true,
+		};
+	}, [data, isFirstLoad]);
 
 	const currentCount = data?.[0]?.currentInputToken ?? 0;
 
@@ -95,13 +68,15 @@ const FilesProcessedText = () => {
 				<AttachFileIcon
 					sx={{
 						fontSize: "1rem",
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
 					}}
 				/>
 				<Typography
 					align="center"
 					sx={{
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
 						fontSize: "13px",
 						fontWeight: 500,
 						letterSpacing: "0.02em",
@@ -120,9 +95,8 @@ const FilesProcessedText = () => {
 						height={40}
 						sx={{
 							margin: "0 auto",
-							backgroundColor: mode === "dark" 
-								? "rgba(255,255,255,0.06)" 
-								: "rgba(0,0,0,0.06)",
+							backgroundColor:
+								mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
 							borderRadius: "8px",
 						}}
 						animation="wave"
@@ -133,16 +107,21 @@ const FilesProcessedText = () => {
 						height={30}
 						sx={{
 							margin: "0 auto",
-							backgroundColor: mode === "dark" 
-								? "rgba(255,255,255,0.06)" 
-								: "rgba(0,0,0,0.06)",
+							backgroundColor:
+								mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
 							borderRadius: "8px",
 						}}
 						animation="wave"
 					/>
 				</div>
 			) : (
-				<Box sx={{ textAlign: "center", opacity: isRefetching ? 0.7 : 1, transition: "opacity 0.2s ease" }}>
+				<Box
+					sx={{
+						textAlign: "center",
+						opacity: isRefetching ? 0.7 : 1,
+						transition: "opacity 0.2s ease",
+					}}
+				>
 					<Typography
 						variant="h5"
 						marginTop="12px"
@@ -151,9 +130,10 @@ const FilesProcessedText = () => {
 							fontWeight: 700,
 							fontSize: "32px",
 							letterSpacing: "-0.03em",
-							background: mode === "dark"
-								? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
-								: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
+							background:
+								mode === "dark"
+									? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
+									: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
 							backgroundClip: "text",
 							WebkitBackgroundClip: "text",
 							WebkitTextFillColor: "transparent",
@@ -180,7 +160,8 @@ const FilesProcessedText = () => {
 							) : (
 								<TrendingDownIcon sx={{ fontSize: "16px" }} />
 							)}
-							{trendValue > 0 ? "+" : ""}{trendValue.toLocaleString("de-DE")} {trendLabel}
+							{trendValue > 0 ? "+" : ""}
+							{trendValue.toLocaleString("de-DE")} {trendLabel}
 						</Typography>
 					) : showTrend && trendValue === 0 ? (
 						<Typography
@@ -193,7 +174,8 @@ const FilesProcessedText = () => {
 								gap: "4px",
 								marginTop: "4px",
 								fontWeight: 500,
-								color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
+								color:
+									mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)",
 							}}
 						>
 							<TrendingFlatIcon sx={{ fontSize: "16px" }} />

@@ -4,8 +4,9 @@ import DownloadIcon from "@mui/icons-material/Download";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
 import { useColorScheme } from "@mui/material/styles";
+import Tooltip from "@mui/material/Tooltip";
+import { format } from "date-fns";
 import { useAtomValue } from "jotai";
 import { loadable } from "jotai/utils";
 import { useCallback, useState } from "react";
@@ -14,15 +15,24 @@ import { allModelsStatsTableAtom } from "@/atoms/all-models-stats-table-atom";
 import { dateRangeAtom } from "@/atoms/date-range-atom";
 import { inputOuputTokenAtom } from "@/atoms/input-output-token-atom";
 import { mcpToolStatsTableAtom } from "@/atoms/mcp-tool-stats-table-atom";
-import { format } from "date-fns";
-
-
 
 interface ExportData {
 	dateRange: { startDate: Date | null; endDate: Date | null };
 	tokens: { currentInputToken: number; currentOutputToken: number }[];
-	models: { model: string; endpoint: string; totalInputToken: number; totalOutputToken: number; requests: number }[];
-	agents: { agentName: string; model: string; totalInputToken: number; totalOutputToken: number; requests: number }[];
+	models: {
+		model: string;
+		endpoint: string;
+		totalInputToken: number;
+		totalOutputToken: number;
+		requests: number;
+	}[];
+	agents: {
+		agentName: string;
+		model: string;
+		totalInputToken: number;
+		totalOutputToken: number;
+		requests: number;
+	}[];
 	tools: { toolName: string; serverName: string; callCount: number }[];
 }
 
@@ -31,13 +41,20 @@ const exportToExcel = async (data: ExportData) => {
 	const wb = XLSX.utils.book_new();
 
 	// Sheet 1: Executive Summary
-	const dateRangeStr = data.dateRange.startDate && data.dateRange.endDate
-		? `${format(data.dateRange.startDate, "dd.MM.yyyy")} - ${format(data.dateRange.endDate, "dd.MM.yyyy")}`
-		: "All Time";
-	
-	const tokens = data.tokens[0] || { currentInputToken: 0, currentOutputToken: 0 };
-	const totalModelsRequests = data.models.reduce((sum, m) => sum + (m.requests || 0), 0);
-	
+	const dateRangeStr =
+		data.dateRange.startDate && data.dateRange.endDate
+			? `${format(data.dateRange.startDate, "dd.MM.yyyy")} - ${format(data.dateRange.endDate, "dd.MM.yyyy")}`
+			: "All Time";
+
+	const tokens = data.tokens[0] || {
+		currentInputToken: 0,
+		currentOutputToken: 0,
+	};
+	const totalModelsRequests = data.models.reduce(
+		(sum, m) => sum + (m.requests || 0),
+		0,
+	);
+
 	const summaryData = [
 		["AI Metrics Dashboard - Executive Summary"],
 		[""],
@@ -60,8 +77,15 @@ const exportToExcel = async (data: ExportData) => {
 
 	// Sheet 2: AI Models
 	if (data.models.length > 0) {
-		const modelsHeader = ["Provider", "Model", "Total Requests", "Input Tokens", "Output Tokens", "Total Tokens"];
-		const modelsRows = data.models.map(m => [
+		const modelsHeader = [
+			"Provider",
+			"Model",
+			"Total Requests",
+			"Input Tokens",
+			"Output Tokens",
+			"Total Tokens",
+		];
+		const modelsRows = data.models.map((m) => [
 			m.endpoint,
 			m.model,
 			m.requests,
@@ -71,14 +95,28 @@ const exportToExcel = async (data: ExportData) => {
 		]);
 		const modelsData = [modelsHeader, ...modelsRows];
 		const modelsSheet = XLSX.utils.aoa_to_sheet(modelsData);
-		modelsSheet["!cols"] = [{ wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
+		modelsSheet["!cols"] = [
+			{ wch: 15 },
+			{ wch: 25 },
+			{ wch: 15 },
+			{ wch: 15 },
+			{ wch: 15 },
+			{ wch: 15 },
+		];
 		XLSX.utils.book_append_sheet(wb, modelsSheet, "AI Models");
 	}
 
 	// Sheet 3: AI Agents
 	if (data.agents.length > 0) {
-		const agentsHeader = ["Agent Name", "Model", "Total Requests", "Input Tokens", "Output Tokens", "Total Tokens"];
-		const agentsRows = data.agents.map(a => [
+		const agentsHeader = [
+			"Agent Name",
+			"Model",
+			"Total Requests",
+			"Input Tokens",
+			"Output Tokens",
+			"Total Tokens",
+		];
+		const agentsRows = data.agents.map((a) => [
 			a.agentName,
 			a.model,
 			a.requests,
@@ -88,21 +126,35 @@ const exportToExcel = async (data: ExportData) => {
 		]);
 		const agentsData = [agentsHeader, ...agentsRows];
 		const agentsSheet = XLSX.utils.aoa_to_sheet(agentsData);
-		agentsSheet["!cols"] = [{ wch: 25 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }];
+		agentsSheet["!cols"] = [
+			{ wch: 25 },
+			{ wch: 25 },
+			{ wch: 15 },
+			{ wch: 15 },
+			{ wch: 15 },
+			{ wch: 15 },
+		];
 		XLSX.utils.book_append_sheet(wb, agentsSheet, "AI Agents");
 	}
 
 	// Sheet 4: MCP Tools
 	if (data.tools.length > 0) {
 		const toolsHeader = ["Tool Name", "Server Name", "Call Count"];
-		const toolsRows = data.tools.map(t => [t.toolName, t.serverName, t.callCount]);
+		const toolsRows = data.tools.map((t) => [
+			t.toolName,
+			t.serverName,
+			t.callCount,
+		]);
 		const toolsData = [toolsHeader, ...toolsRows];
 		const toolsSheet = XLSX.utils.aoa_to_sheet(toolsData);
 		toolsSheet["!cols"] = [{ wch: 30 }, { wch: 20 }, { wch: 15 }];
 		XLSX.utils.book_append_sheet(wb, toolsSheet, "MCP Tools");
 	}
 
-	XLSX.writeFile(wb, `dashboard-export-${format(new Date(), "yyyy-MM-dd")}.xlsx`);
+	XLSX.writeFile(
+		wb,
+		`dashboard-export-${format(new Date(), "yyyy-MM-dd")}.xlsx`,
+	);
 };
 
 const ExportButton = () => {

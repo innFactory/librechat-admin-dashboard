@@ -1,19 +1,17 @@
 "use client";
 
+import BuildIcon from "@mui/icons-material/Build";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import BuildIcon from "@mui/icons-material/Build";
 import { Box, useColorScheme } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
-import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useAtomValue } from "jotai";
 import { loadable } from "jotai/utils";
 import { useEffect, useMemo, useState } from "react";
-import { mcpToolCallsAtom } from "@/atoms/mcp-tool-calls-atom";
-import { autoRefreshAtom } from "@/atoms/auto-refresh-atom";
 import { dateRangeAtom } from "@/atoms/date-range-atom";
+import { mcpToolCallsAtom } from "@/atoms/mcp-tool-calls-atom";
 import { useLoadableWithCache } from "@/hooks/useLoadableWithCache";
 
 const loadableMcpToolCallsAtom = loadable(mcpToolCallsAtom);
@@ -75,14 +73,16 @@ function isThisYear(startDate: Date | null, endDate: Date | null): boolean {
 }
 
 const McpToolCallsText = () => {
-	const { data, previousData, showSkeleton, isRefetching, isFirstLoad } = useLoadableWithCache(loadableMcpToolCallsAtom);
-	const autoRefreshEnabled = useAtomValue(autoRefreshAtom);
+	const { data, showSkeleton, isRefetching, isFirstLoad } =
+		useLoadableWithCache(loadableMcpToolCallsAtom);
 	const dateRange = useAtomValue(dateRangeAtom);
 	const [isClient, setIsClient] = useState(false);
 	const { mode } = useColorScheme();
-	const { vars } = useTheme();
 
-	const isTodayRange = useMemo(() => isToday(dateRange.startDate, dateRange.endDate), [dateRange]);
+	const isTodayRange = useMemo(
+		() => isToday(dateRange.startDate, dateRange.endDate),
+		[dateRange],
+	);
 
 	useEffect(() => {
 		setIsClient(true);
@@ -124,8 +124,12 @@ const McpToolCallsText = () => {
 		if (delta === 0) {
 			return { trendValue: 0, trendLabel: "vs. prev. period", showTrend: true };
 		}
-		return { trendValue: delta, trendLabel: "vs. prev. period", showTrend: true };
-	}, [data, previousData, isFirstLoad, isTodayRange, autoRefreshEnabled]);
+		return {
+			trendValue: delta,
+			trendLabel: "vs. prev. period",
+			showTrend: true,
+		};
+	}, [data, isFirstLoad]);
 
 	return (
 		<div
@@ -149,7 +153,8 @@ const McpToolCallsText = () => {
 				<BuildIcon
 					sx={{
 						fontSize: "1rem",
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
 					}}
 				/>
 				<Typography
@@ -158,7 +163,8 @@ const McpToolCallsText = () => {
 						fontWeight: 500,
 						textTransform: "uppercase",
 						letterSpacing: "0.02em",
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
 						fontSize: "13px",
 						lineHeight: 1.3,
 					}}
@@ -166,7 +172,14 @@ const McpToolCallsText = () => {
 					{label}
 				</Typography>
 			</Box>
-			<div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "12px" }}>
+			<div
+				style={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					marginTop: "12px",
+				}}
+			>
 				{showSkeleton && isClient && (
 					<Box sx={{ textAlign: "center" }}>
 						<Skeleton
@@ -175,7 +188,10 @@ const McpToolCallsText = () => {
 							height={45}
 							animation="wave"
 							sx={{
-								backgroundColor: mode === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.05)",
+								backgroundColor:
+									mode === "dark"
+										? "rgba(255, 255, 255, 0.1)"
+										: "rgba(0, 0, 0, 0.05)",
 								margin: "0 auto",
 							}}
 						/>
@@ -262,7 +278,10 @@ const McpToolCallsText = () => {
 								<TrendingFlatIcon
 									sx={{
 										fontSize: "16px",
-										color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)",
+										color:
+											mode === "dark"
+												? "rgba(255,255,255,0.4)"
+												: "rgba(0,0,0,0.3)",
 									}}
 								/>
 								<Typography
@@ -270,7 +289,10 @@ const McpToolCallsText = () => {
 									sx={{
 										fontSize: "13px",
 										fontWeight: 500,
-										color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)",
+										color:
+											mode === "dark"
+												? "rgba(255,255,255,0.4)"
+												: "rgba(0,0,0,0.3)",
 									}}
 								>
 									{trendLabel}

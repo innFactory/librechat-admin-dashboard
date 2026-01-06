@@ -2,9 +2,6 @@
 
 import { Box, Typography, useColorScheme } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { dateRangeAtom } from "@/atoms/date-range-atom";
 import ActiveUsersText from "@/components/dashboard/active-user-text";
 import AgentCountText from "@/components/dashboard/agent-count-text";
 import AllAgentsStatsTableWithChart from "@/components/dashboard/all-agents-stats-table-with-chart";
@@ -28,14 +25,6 @@ import WebSearchStatsText from "@/components/dashboard/web-search-stats-text";
 const DashboardPage = () => {
 	const { mode } = useColorScheme();
 	const { vars } = useTheme();
-	const [dateRange] = useAtom(dateRangeAtom);
-	const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-	// Mark initial load as complete after first render
-	useEffect(() => {
-		const timer = setTimeout(() => setIsInitialLoad(false), 1500);
-		return () => clearTimeout(timer);
-	}, []);
 
 	const boardsBackgroundColor = vars?.palette.background.glass;
 
@@ -156,13 +145,13 @@ const DashboardPage = () => {
 							gridTemplateColumns: "repeat(5, 1fr)",
 							gap: 2,
 							marginBottom: "16px",
-							"@media (max-width: 1400px)": { 
+							"@media (max-width: 1400px)": {
 								gridTemplateColumns: "repeat(3, 1fr)",
 							},
-							"@media (max-width: 900px)": { 
+							"@media (max-width: 900px)": {
 								gridTemplateColumns: "repeat(2, 1fr)",
 							},
-							"@media (max-width: 600px)": { 
+							"@media (max-width: 600px)": {
 								gridTemplateColumns: "1fr",
 							},
 						}}
@@ -190,13 +179,13 @@ const DashboardPage = () => {
 							gridTemplateColumns: "repeat(5, 1fr)",
 							gap: 2,
 							marginBottom: "30px",
-							"@media (max-width: 1400px)": { 
+							"@media (max-width: 1400px)": {
 								gridTemplateColumns: "repeat(3, 1fr)",
 							},
-							"@media (max-width: 900px)": { 
+							"@media (max-width: 900px)": {
 								gridTemplateColumns: "repeat(2, 1fr)",
 							},
-							"@media (max-width: 600px)": { 
+							"@media (max-width: 600px)": {
 								gridTemplateColumns: "1fr",
 							},
 						}}
@@ -348,7 +337,7 @@ const DashboardPage = () => {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								Managed LibreChat on Azure
+								CompanyGPT - Managed AI for Enterprises GDPR & AI-Act compliant.
 							</a>
 						</Typography>
 					</Box>

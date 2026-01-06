@@ -1,7 +1,7 @@
 "use client";
 
 import GroupIcon from "@mui/icons-material/Group";
-import { Box, useColorScheme, useTheme } from "@mui/material";
+import { Box, useColorScheme } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import { loadable } from "jotai/utils";
@@ -12,10 +12,11 @@ import { useLoadableWithCache } from "@/hooks/useLoadableWithCache";
 const loadableTotalUsersAtom = loadable(totalUsersAtom);
 
 const TotalUsersText = () => {
-	const { data, showSkeleton, isRefetching } = useLoadableWithCache(loadableTotalUsersAtom);
+	const { data, showSkeleton, isRefetching } = useLoadableWithCache(
+		loadableTotalUsersAtom,
+	);
 	const [isClient, setIsClient] = useState(false);
 	const { mode } = useColorScheme();
-	const { vars } = useTheme();
 
 	//https://nextjs.org/docs/messages/react-hydration-error
 	useEffect(() => {
@@ -44,13 +45,15 @@ const TotalUsersText = () => {
 				<GroupIcon
 					sx={{
 						fontSize: "1rem",
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.5)",
 					}}
 				/>
 				<Typography
 					align={"center"}
-					sx={{ 
-						color: mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
+					sx={{
+						color:
+							mode === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.55)",
 						fontSize: "13px",
 						fontWeight: 500,
 						letterSpacing: "0.02em",
@@ -69,9 +72,8 @@ const TotalUsersText = () => {
 						height={40}
 						sx={{
 							margin: "0 auto",
-							backgroundColor: mode === "dark" 
-								? "rgba(255,255,255,0.06)" 
-								: "rgba(0,0,0,0.06)",
+							backgroundColor:
+								mode === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
 							borderRadius: "8px",
 						}}
 						animation={"wave"}
@@ -88,9 +90,10 @@ const TotalUsersText = () => {
 							fontWeight: 700,
 							fontSize: "32px",
 							letterSpacing: "-0.03em",
-							background: mode === "dark"
-								? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
-								: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
+							background:
+								mode === "dark"
+									? "linear-gradient(135deg, #f5f5f7 0%, rgba(255,255,255,0.85) 100%)"
+									: "linear-gradient(135deg, #1d1d1f 0%, rgba(0,0,0,0.85) 100%)",
 							backgroundClip: "text",
 							WebkitBackgroundClip: "text",
 							WebkitTextFillColor: "transparent",

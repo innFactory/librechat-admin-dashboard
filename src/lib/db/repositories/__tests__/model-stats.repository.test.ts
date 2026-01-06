@@ -163,7 +163,7 @@ describe("Model Stats Repository", () => {
 			expect(result[0].totalOutputToken).toBe(150000);
 		});
 
-		it("should exclude agents endpoint", async () => {
+		it("should use transactions collection for accurate token stats", async () => {
 			mockToArray.mockResolvedValueOnce([]);
 
 			const params = {
@@ -176,10 +176,12 @@ describe("Model Stats Repository", () => {
 			const pipeline = mockAggregate.mock.calls[0][0];
 			const matchStage = pipeline[0].$match;
 
-			expect(matchStage.endpoint).toEqual({ $ne: "agents" });
+			// Should filter by date and require non-null model
+			expect(matchStage.createdAt.$gte).toEqual(params.startDate);
+			expect(matchStage.model).toEqual({ $ne: null });
 		});
 
-		it("should calculate median using approximate method", async () => {
+		it("should resolve agent models via conversation and agent lookups", async () => {
 			mockToArray.mockResolvedValueOnce([]);
 
 			const params = {
@@ -191,17 +193,18 @@ describe("Model Stats Repository", () => {
 
 			const pipeline = mockAggregate.mock.calls[0][0];
 
-			// Check for $median operator in tokenStats facet
-			const facet = pipeline[1].$facet;
-			const tokenStatsProject = facet.tokenStats.find(
-				(stage: Record<string, unknown>) =>
-					"$project" in stage &&
-					(stage.$project as Record<string, unknown>).tokenMedian,
+			// Check for $lookup stages for conversation and agent resolution
+			const lookupStages = pipeline.filter(
+				(stage: Record<string, unknown>) => "$lookup" in stage,
 			);
+			expect(lookupStages.length).toBeGreaterThanOrEqual(2);
 
-			expect(tokenStatsProject.$project.tokenMedian.$median.method).toBe(
-				"approximate",
+			// Should lookup conversations and agents
+			const lookupFroms = lookupStages.map(
+				(stage: Record<string, { from: string }>) => stage.$lookup.from,
 			);
+			expect(lookupFroms).toContain("conversations");
+			expect(lookupFroms).toContain("agents");
 		});
 	});
 
@@ -263,10 +266,9 @@ describe("Model Stats Repository", () => {
 			await getModelTimeSeries(params);
 
 			const pipeline = mockAggregate.mock.calls[0][0];
-			const facet = pipeline[1].$facet;
 
-			// Find addFields stage in userMessages
-			const addFieldsStage = facet.userMessages.find(
+			// Find addFields stage which adds the time field
+			const addFieldsStage = pipeline.find(
 				(stage: Record<string, unknown>) => "$addFields" in stage,
 			);
 
@@ -288,9 +290,8 @@ describe("Model Stats Repository", () => {
 			await getModelTimeSeries(params);
 
 			const pipeline = mockAggregate.mock.calls[0][0];
-			const facet = pipeline[1].$facet;
 
-			const addFieldsStage = facet.userMessages.find(
+			const addFieldsStage = pipeline.find(
 				(stage: Record<string, unknown>) => "$addFields" in stage,
 			);
 

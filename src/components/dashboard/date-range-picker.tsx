@@ -1,6 +1,5 @@
 import { useColorScheme } from "@mui/material";
 import Box from "@mui/material/Box";
-import { useTheme } from "@mui/material/styles";
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -17,8 +16,6 @@ export default function CustomDateRangePicker() {
 
 	const [date, setDate] = useAtom(dateRangeAtom);
 	const [isPickerOpen, setIsPickerOpen] = useAtom(datePickerIsOpenAtom);
-
-	const { vars } = useTheme();
 
 	// Solid background colors for readability
 	const datePickerBg = mode === "dark" ? "#2d2d30" : "#ffffff";

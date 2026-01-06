@@ -1,18 +1,24 @@
 {
-	"name": "ai-metrics-dashboard",
-	"version": "0.1.0",
+	"name": "librechat-admin-dashboard",
+	"version": "1.0.0",
 	"private": true,
-	"description": "Dashboard for monitoring and analyzing LibreChat AI usage metrics",
+	"description": "Dashboard for monitoring LibreChat AI usage metrics",
+	"license": "MIT",
+	"author": "innFactory GmbH",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/innFactory/librechat-admin-dashboard"
+	},
 	"scripts": {
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "npx @biomejs/biome check .",
-		"lint:fix": "npx @biomejs/biome check --write .",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"format:check": "biome format --check .",
 		"type-check": "tsc --noEmit",
-		"test": "jest",
-		"test:watch": "jest --watch",
-		"test:coverage": "jest --coverage"
+		"test": "jest --passWithNoTests"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",

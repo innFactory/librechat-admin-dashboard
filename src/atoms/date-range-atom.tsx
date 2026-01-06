@@ -15,12 +15,12 @@ const getInitialDateRange = (): DateRange => {
 					startDate: parsed.startDate ? new Date(parsed.startDate) : null,
 					endDate: parsed.endDate ? new Date(parsed.endDate) : null,
 				};
-			} catch (e) {
+			} catch {
 				// Ignore parse errors
 			}
 		}
 	}
-	
+
 	// Default: current week
 	const initialEnd = new Date();
 	const initialStart = startOfWeek(initialEnd, { weekStartsOn: 1 });
@@ -36,17 +36,21 @@ export const dateRangeAtom = atom(
 	(get) => get(baseDateRangeAtom),
 	(get, set, update: DateRange | ((prev: DateRange) => DateRange)) => {
 		const prevValue = get(baseDateRangeAtom);
-		const newValue = typeof update === "function" 
-			? (update as (prev: DateRange) => DateRange)(prevValue) 
-			: update;
-			
+		const newValue =
+			typeof update === "function"
+				? (update as (prev: DateRange) => DateRange)(prevValue)
+				: update;
+
 		set(baseDateRangeAtom, newValue);
 		// Save to localStorage
 		if (typeof window !== "undefined") {
-			localStorage.setItem(DATE_RANGE_STORAGE_KEY, JSON.stringify({
-				startDate: newValue.startDate?.toISOString(),
-				endDate: newValue.endDate?.toISOString(),
-			}));
+			localStorage.setItem(
+				DATE_RANGE_STORAGE_KEY,
+				JSON.stringify({
+					startDate: newValue.startDate?.toISOString(),
+					endDate: newValue.endDate?.toISOString(),
+				}),
+			);
 		}
-	}
+	},
 );

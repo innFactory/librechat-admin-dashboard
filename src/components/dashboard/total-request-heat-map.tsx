@@ -7,22 +7,22 @@ import Paper from "@mui/material/Paper";
 import { styled, useTheme } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import {
+	eachDayOfInterval,
+	eachWeekOfInterval,
+	format,
+	getDay,
+	getISOWeek,
+} from "date-fns";
 import { useAtom } from "jotai";
 import { loadable } from "jotai/utils";
-import {
-    format,
-    eachDayOfInterval,
-    eachWeekOfInterval,
-    getISOWeek,
-    getDay,
-} from "date-fns";
-import { useEffect, useState, useMemo } from "react";
-import { totalRequestHeatMapAtom } from "@/atoms/total-request-heat-map-atom";
+import { useEffect, useMemo, useState } from "react";
 import { dateRangeAtom } from "@/atoms/date-range-atom";
+import { totalRequestHeatMapAtom } from "@/atoms/total-request-heat-map-atom";
 import type { RequestHeatMap } from "@/components/models/request-heat-map";
 import {
-    getHeatmapGranularity,
-    type HeatmapGranularity,
+	getHeatmapGranularity,
+	type HeatmapGranularity,
 } from "@/components/utils/date-range-helpers";
 
 const timeSlotsLabels = [
@@ -113,11 +113,7 @@ const createHourlyView = (
 	return {
 		type: "hourly",
 		data: [hourlyData],
-		rowLabels: [
-			dateRange.startDate
-				? format(dateRange.startDate, "EEEE")
-				: "",
-		],
+		rowLabels: [dateRange.startDate ? format(dateRange.startDate, "EEEE") : ""],
 		colLabels: timeSlotsLabels,
 	};
 };
@@ -128,7 +124,12 @@ const createWeeklyDailyView = (
 	dateRange: { startDate: Date | null; endDate: Date | null },
 ): HeatmapMatrix => {
 	if (!dateRange.startDate || !dateRange.endDate) {
-		return { type: "daily", data: [], rowLabels: [], colLabels: timeSlotsLabels };
+		return {
+			type: "daily",
+			data: [],
+			rowLabels: [],
+			colLabels: timeSlotsLabels,
+		};
 	}
 
 	// Get all days in the range
@@ -242,14 +243,14 @@ const createYearlyView = (
 
 		const entryDate = new Date(entry.date);
 		const dayIndex = isoToIndex(entry.dayOfWeek);
-		
+
 		// Find which week this date belongs to
 		// We compare ISO week numbers and years
-		const entryWeek = getISOWeek(entryDate);
+		const _entryWeek = getISOWeek(entryDate);
 		// Simple approximation: find the index in our weeks array
 		// A more robust way is to find the week start date that matches
-		const weekIndex = weeks.findIndex(week => {
-			const w = getISOWeek(week);
+		const weekIndex = weeks.findIndex((week) => {
+			const _w = getISOWeek(week);
 			// Check if same week number. Note: this is simplified and might have edge cases around year boundaries
 			// but for a "yearly view" usually within one year or continuous range it's okay.
 			// Better: check if date is within the week interval
@@ -259,7 +260,12 @@ const createYearlyView = (
 			return entryDate >= weekStart && entryDate <= weekEnd;
 		});
 
-		if (dayIndex >= 0 && dayIndex < 7 && weekIndex >= 0 && weekIndex < weeks.length) {
+		if (
+			dayIndex >= 0 &&
+			dayIndex < 7 &&
+			weekIndex >= 0 &&
+			weekIndex < weeks.length
+		) {
 			matrix[dayIndex][weekIndex] += entry.totalRequests;
 		}
 	});
@@ -345,7 +351,14 @@ const TotalRequestHeatMap = () => {
 	};
 
 	return (
-		<Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+		<Box
+			sx={{
+				width: "100%",
+				height: "100%",
+				display: "flex",
+				flexDirection: "column",
+			}}
+		>
 			<Typography
 				variant="h6"
 				display="flex"
@@ -423,7 +436,14 @@ const TotalRequestHeatMap = () => {
 						{/* Yearly/GitHub-style view */}
 						{(granularity === "weekly" || granularity === "monthly") &&
 							heatmapMatrix.data.length > 0 && (
-								<Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+								<Box
+									sx={{
+										width: "100%",
+										height: "100%",
+										display: "flex",
+										flexDirection: "column",
+									}}
+								>
 									{/* Week number labels at top */}
 									<Grid
 										container
@@ -437,7 +457,10 @@ const TotalRequestHeatMap = () => {
 												<Typography
 													variant="caption"
 													align="center"
-													sx={{ fontSize: "8px", opacity: idx % 4 === 0 ? 1 : 0 }}
+													sx={{
+														fontSize: "8px",
+														opacity: idx % 4 === 0 ? 1 : 0,
+													}}
 												>
 													{idx % 4 === 0 ? label : ""}
 												</Typography>
@@ -454,7 +477,14 @@ const TotalRequestHeatMap = () => {
 											marginTop={0.3}
 											sx={{ flex: 1 }}
 										>
-											<Grid size={1} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+											<Grid
+												size={1}
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
 												<Typography
 													variant="caption"
 													align="center"
@@ -471,7 +501,11 @@ const TotalRequestHeatMap = () => {
 													systemMode,
 												);
 												return (
-													<Grid key={`cell-${rowIdx}-${colIdx}`} size={1} sx={{ height: "100%" }}>
+													<Grid
+														key={`cell-${rowIdx}-${colIdx}`}
+														size={1}
+														sx={{ height: "100%" }}
+													>
 														<Tooltip
 															title={
 																<Typography
@@ -507,7 +541,14 @@ const TotalRequestHeatMap = () => {
 						{/* Daily/Hourly view */}
 						{(granularity === "hourly" || granularity === "daily") &&
 							heatmapMatrix.data.length > 0 && (
-								<Box sx={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+								<Box
+									sx={{
+										width: "100%",
+										height: "100%",
+										display: "flex",
+										flexDirection: "column",
+									}}
+								>
 									{/* Hour labels at top */}
 									<Grid
 										container
@@ -538,7 +579,14 @@ const TotalRequestHeatMap = () => {
 											marginTop={0.5}
 											sx={{ flex: 1 }}
 										>
-											<Grid size={1} sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+											<Grid
+												size={1}
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
 												<Typography
 													variant="subtitle2"
 													align="center"
@@ -555,7 +603,11 @@ const TotalRequestHeatMap = () => {
 													systemMode,
 												);
 												return (
-													<Grid key={`cell-${rowIdx}-${colIdx}`} size={1} sx={{ height: "100%" }}>
+													<Grid
+														key={`cell-${rowIdx}-${colIdx}`}
+														size={1}
+														sx={{ height: "100%" }}
+													>
 														<Tooltip
 															title={
 																<Typography

@@ -1,8 +1,8 @@
 import {
-    type Collection,
-    type Db,
-    MongoClient,
-    type MongoClientOptions,
+	type Collection,
+	type Db,
+	MongoClient,
+	type MongoClientOptions,
 } from "mongodb";
 
 /**
