@@ -3,7 +3,7 @@
 [![CI](https://github.com/innFactory/librechat-admin-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/innFactory/librechat-admin-dashboard/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A dashboard for monitoring [LibreChat](https://github.com/danny-avila/LibreChat) usage metrics, token consumption, and agent statistics.
+A dashboard for monitoring [LibreChat](https://github.com/danny-avila/LibreChat) usage metrics, token consumption, and agent statistics. Right now, it's just a proof of concept. If you find any issues or have feature requests, please open an issue.
 
 ![Dashboard Screenshot](docs/screenshot.png)
 
