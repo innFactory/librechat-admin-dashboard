@@ -15,6 +15,7 @@
 		"start": "next start",
 		"lint": "biome check .",
 		"lint:fix": "biome check --write .",
+		"format:check": "biome check --formatter-enabled=true --linter-enabled=false .",
 		"format": "biome format --write .",
 		"type-check": "tsc --noEmit",
 		"test": "jest --passWithNoTests"
