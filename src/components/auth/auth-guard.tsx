@@ -85,7 +85,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 				if (response.ok) {
 					setIsAuthenticated(true);
 					setPassword(""); // Clear password from memory
-					router.push("/dashboard");
+					router.push("/");
 				} else {
 					const data = await response.json();
 					setError(data.error || "Authentication failed. Please try again.");
