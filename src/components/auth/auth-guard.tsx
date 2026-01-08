@@ -3,7 +3,7 @@
 import { Box, CircularProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface AuthGuardProps {
 	children: React.ReactNode;
@@ -17,8 +17,15 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 	const { vars } = useTheme();
 	const router = useRouter();
 	const pathname = usePathname();
+	const isRedirecting = useRef(false);
 
 	const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+
+	// Reset redirecting flag when pathname changes
+	// biome-ignore lint/correctness/useExhaustiveDependencies: pathname is intentionally used as trigger
+	useEffect(() => {
+		isRedirecting.current = false;
+	}, [pathname]);
 
 	// Check authentication status on mount
 	useEffect(() => {
@@ -39,12 +46,15 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 	// Handle redirects based on auth state
 	useEffect(() => {
 		if (isAuthenticated === null) return; // Still checking
+		if (isRedirecting.current) return; // Already redirecting
 
 		if (!isAuthenticated && !isPublicRoute) {
 			// Not authenticated and trying to access protected route
+			isRedirecting.current = true;
 			router.replace("/login");
 		} else if (isAuthenticated && isPublicRoute) {
 			// Authenticated but on login page, redirect to dashboard
+			isRedirecting.current = true;
 			router.replace("/dashboard");
 		}
 	}, [isAuthenticated, isPublicRoute, router]);

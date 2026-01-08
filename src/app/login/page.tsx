@@ -13,38 +13,17 @@ import {
 	Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useRouter } from "next/navigation";
-import { type FormEvent, useCallback, useEffect, useState } from "react";
+import { type FormEvent, useCallback, useState } from "react";
 
 export default function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
-	const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 	const { vars } = useTheme();
-	const router = useRouter();
 
-	// Check if already authenticated
-	useEffect(() => {
-		const checkAuth = async () => {
-			try {
-				const response = await fetch("/api/auth/verify", {
-					method: "POST",
-					credentials: "include",
-				});
-				if (response.ok) {
-					// Already authenticated, redirect to dashboard
-					router.replace("/dashboard");
-					return;
-				}
-			} catch {
-				// Not authenticated, show login form
-			}
-			setIsCheckingAuth(false);
-		};
-		checkAuth();
-	}, [router]);
+	// Auth check is handled by AuthGuard in layout.tsx
+	// No need to check here - AuthGuard will redirect if already authenticated
 
 	const handleSubmit = useCallback(
 		async (e: FormEvent) => {
@@ -64,7 +43,8 @@ export default function LoginPage() {
 
 				if (response.ok) {
 					setPassword(""); // Clear password from memory
-					router.replace("/dashboard");
+					// Force a full page reload to reset AuthGuard state
+					window.location.href = "/dashboard";
 				} else {
 					const data = await response.json();
 					setError(data.error || "Authentication failed. Please try again.");
@@ -75,25 +55,8 @@ export default function LoginPage() {
 				setIsLoading(false);
 			}
 		},
-		[password, router],
+		[password],
 	);
-
-	// Loading state while checking auth
-	if (isCheckingAuth) {
-		return (
-			<Box
-				sx={{
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					minHeight: "100vh",
-					backgroundColor: vars?.palette.background.default,
-				}}
-			>
-				<CircularProgress />
-			</Box>
-		);
-	}
 
 	return (
 		<Box
