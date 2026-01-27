@@ -15,6 +15,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { type FormEvent, useCallback, useState } from "react";
 import { API_BASE, getAbsolutePath } from "@/lib/utils/api-base";
+import DarkLightSwitch from "@/components/dashboard/dark-light-switch";
 
 export default function LoginPage() {
 	const [password, setPassword] = useState("");
@@ -200,6 +201,9 @@ export default function LoginPage() {
 					</a>
 				</Typography>
 			</Paper>
+			<Box sx={{ position: "absolute", bottom: 16, right: 16 }}>
+				<DarkLightSwitch />
+			</Box>
 		</Box>
 	);
 }
