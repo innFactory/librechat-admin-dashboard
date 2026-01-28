@@ -14,8 +14,8 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { type FormEvent, useCallback, useState } from "react";
-import { API_BASE, getAbsolutePath } from "@/lib/utils/api-base";
 import DarkLightSwitch from "@/components/dashboard/dark-light-switch";
+import { API_BASE, getAbsolutePath } from "@/lib/utils/api-base";
 
 export default function LoginPage() {
 	const [password, setPassword] = useState("");

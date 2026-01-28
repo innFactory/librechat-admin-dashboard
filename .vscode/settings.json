@@ -5,5 +5,8 @@
 		"source.fixAll.biome": "explicit",
 		"source.organizeImports.biome": "explicit",
 		"source.removeUnusedImports": "explicit"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
 	}
 }
